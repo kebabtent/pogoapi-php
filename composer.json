@@ -1,5 +1,5 @@
 {
-  "name": "jaspervdm/pokemongoapi-php",
+  "name": "jaspervdm/pogoapi-php",
   "description": "API for Pokemon Go",
   "require": {
     "jaspervdm/pogoprotos-php"
