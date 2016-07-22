@@ -1,2 +1,2 @@
-# PokemonGoAPI-PHP
+# PoGoAPI-PHP
 API for Pokemon Go
