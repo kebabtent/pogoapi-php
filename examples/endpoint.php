@@ -1,4 +1,7 @@
 <?php
+
+require __DIR__ . '/../vendor/autoload.php';
+
 use POGOAPI\Session\GoogleSession;
 
 $session = new GoogleSession("email", "password");

@@ -6,5 +6,8 @@
     "jaspervdm/pogoprotos-php": "dev-master"
   },
   "autoload": {
+    "psr-4": {
+      "POGOAPI\\": "src/"
+    }
   }
 }
