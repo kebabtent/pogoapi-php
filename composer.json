@@ -2,7 +2,8 @@
   "name": "jaspervdm/pogoapi-php",
   "description": "API for Pokemon Go",
   "require": {
-    "jaspervdm/pogoprotos-php"
+    "guzzlehttp/guzzle": "~6.0",
+    "jaspervdm/pogoprotos-php": "dev-master"
   },
   "autoload": {
   }
