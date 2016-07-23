@@ -32,17 +32,6 @@ class GoogleSession extends Session {
     ]);
   }
 
-  protected function decodeResponse($in) {
-    $out = [];
-    $lines = explode("\n", $in);
-    foreach ($lines as $line) {
-      if (preg_match("/(.*?)=(.*)/", $line, $match)) {
-        $out[$match[1]] = $match[2];
-      }
-    }
-    return $out;
-  }
-
   public function authenticate() {
     // Master login
     $loginRes = $this->authClient->post("auth", ["form_params" => [
@@ -60,7 +49,7 @@ class GoogleSession extends Session {
       "sdk_version"     => 17
     ]]);
 
-    $masterLogin = $this->decodeResponse($loginRes->getBody());
+    $masterLogin = parse_ini_string($loginRes->getBody());
     if (!isset($masterLogin['Token'])) {
       throw new Exception("Failed master login");
     }
@@ -82,7 +71,7 @@ class GoogleSession extends Session {
       "sdk_version"     => 17
     ]]);
 
-    $auth = $this->decodeResponse($oauthRes->getBody());
+    $auth = parse_ini_string($oauthRes->getBody());
     if (!isset($auth['Auth'])) {
       throw new Exception("Failed auth");
     }
