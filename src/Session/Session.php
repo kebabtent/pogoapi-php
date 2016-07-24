@@ -54,7 +54,7 @@ abstract class Session {
   abstract public function authenticate();
   abstract public function getProvider();
   abstract public function getToken();
-  abstract public function setToken();
+  abstract public function setToken($token);
 
   protected function getDefaultRequests() {
     $reqs = [];
