@@ -78,8 +78,12 @@ class GoogleSession extends Session {
     $this->token = $auth['Auth'];
   }
 
-  protected function getToken() {
+  public function getToken() {
     return $this->token;
+  }
+
+  public function setToken($token) {
+    $this->token = $token;
   }
 
   public function getProvider() {
