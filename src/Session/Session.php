@@ -37,6 +37,10 @@ abstract class Session {
     return $this->endpoint;
   }
 
+  public function setEndpoint($endpoint) {
+    $this->endpoint = $endpoint;
+  }
+
   public function setLocation($lat, $long, $alt) {
     $this->lat = $lat;
     $this->long = $long;
@@ -49,7 +53,8 @@ abstract class Session {
 
   abstract public function authenticate();
   abstract public function getProvider();
-  abstract protected function getToken();
+  abstract public function getToken();
+  abstract public function setToken();
 
   protected function getDefaultRequests() {
     $reqs = [];
