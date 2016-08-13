@@ -1,8 +1,10 @@
 <?php
 namespace POGOAPI\Session;
 
-use GuzzleHttp\Client;
 use Exception;
+use Monolog\Logger;
+use GuzzleHttp\Client;
+use POGOAPI\Map\Location;
 
 class GoogleSession extends Session {
   protected $authClient;
@@ -15,8 +17,8 @@ class GoogleSession extends Session {
   protected $clientSig;
   protected $token;
 
-  public function __construct($username, $password, $androidId = "3764d56d68ae549c", $service = "audience:server:client_id:848232511240-7so421jotr2609rmqakceuu1luuq0ptb.apps.googleusercontent.com", $app = "com.nianticlabs.pokemongo", $clientSig = "321187995bc7cdc2b5fc91b11a96e2baa8602c62") {
-    parent::__construct();
+  public function __construct(Logger $logger, Location $location, $username, $password, $androidId = "3764d56d68ae549c", $service = "audience:server:client_id:848232511240-7so421jotr2609rmqakceuu1luuq0ptb.apps.googleusercontent.com", $app = "com.nianticlabs.pokemongo", $clientSig = "321187995bc7cdc2b5fc91b11a96e2baa8602c62") {
+    parent::__construct($logger, $location);
 
     $this->username = $username;
     $this->password = $password;
@@ -49,10 +51,14 @@ class GoogleSession extends Session {
       "sdk_version"     => 17
     ]]);
 
+    $this->logger->debug("Google authentication");
+
     $masterLogin = parse_ini_string($loginRes->getBody());
     if (!isset($masterLogin['Token'])) {
       throw new Exception("Failed master login");
     }
+
+    $this->logger->debug("Google auth: master login");
 
     // OAuth
     $oauthRes = $this->authClient->post("auth", ["form_params" => [
@@ -76,6 +82,8 @@ class GoogleSession extends Session {
       throw new Exception("Failed auth");
     }
     $this->token = $auth['Auth'];
+
+    $this->logger->debug("Google auth: obtained token");
   }
 
   public function getToken() {
