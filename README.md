@@ -2,16 +2,22 @@
 API for Pokemon Go
 
 ## Progress
-[x] Login with google
-[ ] Login with PTC
-[x] Uk6 compatible
-[x] Obtain endpoint
-[x] Obtain profile
+* [x] Login with google
+* [ ] Login with PTC
+* [x] Uk6 compatible
+* [x] Obtain endpoint
+* [x] Obtain profile
 
 ## Installation
-This API can be loaded with composer:
-``` bash
-composer require jaspervdm/pogoapi-php
+Add the following fields in your project `composer.json`:
+``` json
+{
+  "require": {
+    "jaspervdm/pogoapi-php": "dev-master"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
 ```
 
 ## Usage
@@ -42,3 +48,4 @@ See also the `examples/` directory
 * [POGO-PHP](https://github.com/POGO-PHP) for the [pure PHP implementation of encrypt.c](https://github.com/POGO-PHP/POGOEncrypt-PHP)
 * [Sjaakmoes](https://github.com/Sjaakmoes) for the [correct implementation of request signing](https://github.com/Sjaakmoes/pokapi/blob/27cb0281500821b7b2c64150aa779a5a997080c3/src/Pokapi/Rpc/Service.php#L243)
 * [MatthewKingDev](https://github.com/MatthewKingDev) for the [modified xxhash](https://github.com/MatthewKingDev/php-xxhash)
+

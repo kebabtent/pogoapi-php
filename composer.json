@@ -5,7 +5,6 @@
     "php": "^7.0",
     "monolog/monolog": "^1.20",
     "guzzlehttp/guzzle": "^6.0",
-    "jaspervdm/pogoprotos-php": "dev-test-protobuf",
     "pogo-php/pogoencrypt-php": "^1.0",
     "ext-xxhash": "*"
   },

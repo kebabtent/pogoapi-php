@@ -17,6 +17,16 @@ class GoogleSession extends Session {
   protected $clientSig;
   protected $token;
 
+  /**
+   * @param Logger $logger
+   * @param Location $location
+   * @param $username
+   * @param $password
+   * @param string $androidId
+   * @param string $service
+   * @param string $app
+   * @param string $clientSig
+   */
   public function __construct(Logger $logger, Location $location, $username, $password, $androidId = "3764d56d68ae549c", $service = "audience:server:client_id:848232511240-7so421jotr2609rmqakceuu1luuq0ptb.apps.googleusercontent.com", $app = "com.nianticlabs.pokemongo", $clientSig = "321187995bc7cdc2b5fc91b11a96e2baa8602c62") {
     parent::__construct($logger, $location);
 
@@ -26,7 +36,6 @@ class GoogleSession extends Session {
     $this->service = $service;
     $this->app = $app;
     $this->clientSig = $clientSig;
-    $this->token = false;
 
     $this->authClient = new Client([
       "base_uri" => "https://android.clients.google.com",
@@ -34,6 +43,9 @@ class GoogleSession extends Session {
     ]);
   }
 
+  /**
+   * @throws Exception
+   */
   public function authenticate() {
     // Master login
     $loginRes = $this->authClient->post("auth", ["form_params" => [
@@ -86,15 +98,35 @@ class GoogleSession extends Session {
     $this->logger->debug("Google auth: obtained token");
   }
 
+  /**
+   * @return bool
+   */
+  public function hasToken() {
+    return !is_null($this->token);
+  }
+
+  /**
+   * @return string
+   * @throws Exception
+   */
   public function getToken() {
+    if (!$this->hasToken()) {
+      throw new Exception("No token set");
+    }
     return $this->token;
   }
 
+  /**
+   * @param string $token
+   */
   public function setToken($token) {
     $this->token = $token;
   }
 
-  public function getProvider() {
-    return "google";
+  /**
+   * @return AccountType
+   */
+  public function getType() {
+    return AccountType::GOOGLE();
   }
 }

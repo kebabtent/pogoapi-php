@@ -25,6 +25,9 @@ class RequestHandler {
   protected $RPCId;
   protected $client;
 
+  /**
+   * @param Session $session
+   */
   public function __construct(Session $session) {
     $this->logger = $session->getLogger();
     $this->session = $session;
@@ -35,13 +38,18 @@ class RequestHandler {
     ]);
   }
 
-  protected function getRPCId() : \int {
+  /**
+   * @return int
+   */
+  protected function getRPCId() {
     return ++$this->RPCId;
   }
 
-  protected function getDefaultRequests() : array {
+  /**
+   * @return Request[]
+   */
+  protected function getDefaultRequests() {
     $reqs = [];
-    // TODO: default requests
 /*    $reqs[] = new R\HatchedEggsRequest();
 
     $inventory = new ProtoRequest();
@@ -66,13 +74,17 @@ class RequestHandler {
   }
 
   /**
-   * @param Request $req
-   * @param bool|true $defaults
+   * @param Request[] $reqs
    * @param bool|false $createEndpoint
+   * @param bool|false $redo
    * @throws Exception
    */
-  public function execute(Request $req, $defaults = true, $createEndpoint = false) {
-    $this->logger->info("Execute ".get_class($req));
+  public function execute($reqs, $createEndpoint = false, $redo = true) {
+    $reqTypes = [];
+    foreach ($reqs as $req) {
+      $reqTypes[] = get_class($req);
+    }
+    $this->logger->info("Execute ".implode(", ", $reqTypes));
 
     $env = new RequestEnvelope();
     $env->setStatusCode(2);
@@ -84,14 +96,20 @@ class RequestHandler {
     $env->setLongitude($location->getLongitude());
     $env->setAltitude($location->getAltitude());
 
-    if ($this->session->hasAuthTicket()) {
+    if ($this->session->hasAuthTicket() && $this->session->getAuthTicket()->isValid()) {
       $this->logger->debug("Existing auth ticket");
       $env->setAuthTicket($this->session->getAuthTicket()->toProto());
     }
     else {
+      if (!$this->session->hasToken()) {
+        $this->session->authenticate();
+      }
+
+      $this->session->setEndpoint(null);
+
       $this->logger->debug("Auth with token");
       $info = new AuthInfo();
-      $info->setProvider($this->session->getProvider());
+      $info->setProvider($this->session->getType()->getProvider());
 
       $token = new JWT();
       $token->setContents($this->session->getToken());
@@ -102,21 +120,20 @@ class RequestHandler {
     }
     $env->setUnknown12(989);
 
-    $env->addRequests($req->toProto());
-    if ($defaults) {
-      $defaultReqs = $this->getDefaultRequests();
-      foreach ($defaultReqs as $defaultReq) {
-        $env->addRequests($defaultReq->toProto());
-      }
+    foreach ($reqs as $req) {
+      $env->addRequests($req->toProto());
     }
 
     $URL = $this->session->hasEndpoint() ? $this->session->getEndpoint() : self::APIURL;
 
-    $resp = $this->client->post($URL, ["body" => $env->toStream()]);
+    Signature::sign($this->session, $env, $reqs);
+
+    $resp = $this->client->post($URL, ["body" => $env->toStream()->getContents()]);
     $respEnv = new ResponseEnvelope((string) $resp->getBody());
     if ($respEnv->hasAuthTicket()) {
-      $this->logger->info("Received auth ticket");
-      $this->session->setAuthTicket(new AuthTicket($respEnv->getAuthTicket()));
+      $ticket = new AuthTicket($respEnv->getAuthTicket());
+      $this->logger->info("Received auth ticket, expires in ".$ticket->getTimeToExpire()."s");
+      $this->session->setAuthTicket($ticket);
     }
 
     if ($respEnv->hasApiUrl()) {
@@ -125,32 +142,49 @@ class RequestHandler {
       $this->session->setEndpoint("https://".$endpoint."/rpc");
     }
 
-    if ($createEndpoint) {
-      return;
+    $statusCode = $respEnv->getStatusCode();
+    $this->logger->debug("Status code ".$statusCode);
+    if ($statusCode == 102) {
+      // Some auth problem
+      throw new Exception("Received status code 102: invalid auth");
     }
-
-    $count = 0;
-    $firstReturn = null;
-    foreach ($respEnv->getReturnsList() as $return) {
-      if ($count == 0) {
-        $firstReturn = $return;
+    elseif ($statusCode == 53) {
+      // Wrong endpoint
+      if ($redo) {
+        $this->execute($reqs, $createEndpoint, false);
       }
-      $count++;
+      else {
+        throw new Exception("Received status code 53: wrong endpoint");
+      }
+    }
+    elseif ($statusCode == 3) {
+      // Possible ban
+      throw new Exception("Received status code 3: account possibly banned");
     }
 
-    if ($count < 1) {
-      throw new Exception("No response found");
+    if (!$respEnv->hasReturnsList()) {
+      throw new Exception("No responses given");
     }
 
-    $this->logger->debug("Response envelope:");
+    $returns = $respEnv->getReturnsList();
+    $countResponses = $returns->count();
+    if ($countResponses != count($reqs)) {
+      throw new Exception("Invalid responses found");
+    }
+
+    $responses = [];
+    foreach ($returns as $return) {
+      $responses[] = $return;
+    }
+
+    array_map(function (Request $req, $response) {
+      $req->setRawResponse($response);
+    }, $reqs, $responses);
+
+    /*$this->logger->debug("Response envelope:");
     $lines = explode("\n", print_r($respEnv, true));
     foreach ($lines as $line) {
       $this->logger->debug($line);
-    }
-
-    $req->setRawResponse($firstReturn);
-    if ($defaults) {
-      // TODO: handle default requests
-    }
+    }*/
   }
 }
