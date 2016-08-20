@@ -2,8 +2,8 @@
 namespace POGOAPI\Session\Requests;
 
 use POGOAPI\Session\Session;
-use POGOProtos\Networking\Requests\Messages\GetHatchedEggsMessage;
 use POGOProtos\Networking\Requests\RequestType;
+use POGOProtos\Networking\Requests\Messages\GetPlayerMessage;
 use POGOProtos\Networking\Responses\GetPlayerResponse;
 
 /**
@@ -18,10 +18,11 @@ class PlayerRequest extends Request {
   }
 
   /**
-   * @return GetHatchedEggsMessage
+   * @return GetPlayerMessage
    */
   public function getRequestMessage() {
-    $msg = new GetHatchedEggsMessage();
+    $msg = new GetPlayerMessage();
+//    $msg->setAppVersion(Session::APPVERSION);
     return $msg;
   }
 

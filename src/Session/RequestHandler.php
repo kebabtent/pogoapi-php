@@ -152,6 +152,7 @@ class RequestHandler {
       // Wrong endpoint
       if ($redo) {
         $this->execute($reqs, $createEndpoint, false);
+        return;
       }
       else {
         throw new Exception("Received status code 53: wrong endpoint");

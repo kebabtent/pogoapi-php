@@ -1,9 +1,13 @@
 <?php
 namespace POGOAPI\Session\Requests;
 
+use POGOProtos\Networking\Requests\Messages\GetHatchedEggsMessage;
 use POGOProtos\Networking\Requests\RequestType;
 use POGOProtos\Networking\Responses\GetHatchedEggsResponse;
 
+/**
+ * @method GetHatchedEggsResponse getResponse()
+ */
 class HatchedEggsRequest extends Request {
   /**
    * @return RequestType
@@ -13,11 +17,11 @@ class HatchedEggsRequest extends Request {
   }
 
   /**
-   * @return GetPlayerMessage
+   * @return GetHatchedEggsMessage
    */
   public function getRequestMessage() {
-    $msg = new GetPlayerMessage();
-    $msg->setAppVersion(Session::APPVERSION);
+    $msg = new GetHatchedEggsMessage();
+
     return $msg;
   }
 

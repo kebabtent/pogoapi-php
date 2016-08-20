@@ -14,6 +14,7 @@ abstract class Session {
   protected $logger;
   protected $handler;
   protected $location;
+
   protected $authTicket;
   protected $endpoint;
   protected $startMicroTime;
@@ -45,15 +46,26 @@ abstract class Session {
     return $this->handler;
   }
 
+  public function hasProfile() {
+    return !is_null($this->profile);
+  }
+
   /**
    * @return Profile
    */
   public function getProfile() {
-    if (!$this->profile) {
+    if (!$this->hasProfile()) {
       $this->profile = new Profile($this);
       $this->profile->update();
     }
     return $this->profile;
+  }
+
+  /**
+   * @param Profile $profile
+   */
+  public function setProfile(Profile $profile) {
+    $this->profile = $profile;
   }
 
   /**
@@ -188,15 +200,9 @@ abstract class Session {
     $req = new PlayerRequest($this);
     $this->handler->execute([$req], false, true);
 
-    echo "hasPlayerData:\n";
-    var_dump($req->getResponse()->hasPlayerData());
-
     if ($req->getResponse()->hasPlayerData()) {
-      var_dump($req->getResponse()->getPlayerData());
+      $this->getProfile()->setData($req->getResponse()->getPlayerData());
     }
-
-    echo "Create endpoint response:\n";
-    var_dump($req->getResponse());
 
     /*$req = new Request();
     $req->setRequestType(RequestType::GET_PLAYER);
