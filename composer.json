@@ -5,9 +5,10 @@
     "php": "^7.0",
     "monolog/monolog": "^1.20",
     "guzzlehttp/guzzle": "^6.0",
-    "jaspervdm/pogoprotos-php": "dev-master",
+    "jaspervdm/pogoprotos-php": "dev-master#e6e0bf540a16c8ddef7224300ed84d3ae51f59b4",
     "pogo-php/pogoencrypt-php": "^1.0",
-    "ext-xxhash": "*"
+    "ext-xxhash": "*",
+    "nicklasw/s2-geometry-library-php": "dev-master"
   },
   "autoload": {
     "psr-4": {

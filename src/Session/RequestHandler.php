@@ -129,7 +129,7 @@ class RequestHandler {
     Signature::sign($this->session, $env, $reqs);
 
     $resp = $this->client->post($URL, ["body" => $env->toStream()->getContents()]);
-    $respEnv = new ResponseEnvelope((string) $resp->getBody());
+    $respEnv = new ResponseEnvelope($resp->getBody()->getContents());
     if ($respEnv->hasAuthTicket()) {
       $ticket = new AuthTicket($respEnv->getAuthTicket());
       $this->logger->info("Received auth ticket, expires in ".$ticket->getTimeToExpire()."s");
@@ -151,6 +151,7 @@ class RequestHandler {
     elseif ($statusCode == 53) {
       // Wrong endpoint
       if ($redo) {
+        sleep(3);
         $this->execute($reqs, $createEndpoint, false);
         return;
       }
@@ -181,11 +182,5 @@ class RequestHandler {
     array_map(function (Request $req, $response) {
       $req->setRawResponse($response);
     }, $reqs, $responses);
-
-    /*$this->logger->debug("Response envelope:");
-    $lines = explode("\n", print_r($respEnv, true));
-    foreach ($lines as $line) {
-      $this->logger->debug($line);
-    }*/
   }
 }

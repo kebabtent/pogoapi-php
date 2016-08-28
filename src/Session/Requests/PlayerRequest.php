@@ -1,7 +1,6 @@
 <?php
 namespace POGOAPI\Session\Requests;
 
-use POGOAPI\Session\Session;
 use POGOProtos\Networking\Requests\RequestType;
 use POGOProtos\Networking\Requests\Messages\GetPlayerMessage;
 use POGOProtos\Networking\Responses\GetPlayerResponse;
@@ -30,7 +29,7 @@ class PlayerRequest extends Request {
    * @param string $raw
    * @return GetPlayerResponse
    */
-  public function getResponseHandler($raw) {
+  protected function getResponseHandler($raw) {
     return new GetPlayerResponse($raw);
   }
 }

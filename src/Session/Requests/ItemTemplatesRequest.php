@@ -28,7 +28,7 @@ class ItemTemplatesRequest extends Request {
    * @param string $raw
    * @return DownloadItemTemplatesResponse
    */
-  public function getResponseHandler($raw) {
+  protected function getResponseHandler($raw) {
     return new DownloadItemTemplatesResponse($raw);
   }
 }

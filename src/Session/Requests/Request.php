@@ -26,7 +26,7 @@ abstract class Request {
    * @param string $raw
    * @return AbstractMessage
    */
-  abstract public function getResponseHandler($raw);
+  abstract protected function getResponseHandler($raw);
 
   /**
    * @param Session $session
@@ -70,7 +70,7 @@ abstract class Request {
   }
 
   /**
-   * @param bool|true $defaults
+   * @param bool $defaults
    * @throws Exception
    */
   public function execute($defaults = true) {

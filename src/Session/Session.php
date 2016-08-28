@@ -56,7 +56,6 @@ abstract class Session {
   public function getProfile() {
     if (!$this->hasProfile()) {
       $this->profile = new Profile($this);
-      $this->profile->update();
     }
     return $this->profile;
   }
@@ -199,18 +198,5 @@ abstract class Session {
 
     $req = new PlayerRequest($this);
     $this->handler->execute([$req], false, true);
-
-    if ($req->getResponse()->hasPlayerData()) {
-      $this->getProfile()->setData($req->getResponse()->getPlayerData());
-    }
-
-    /*$req = new Request();
-    $req->setRequestType(RequestType::GET_PLAYER);
-    $env = $this->wrap([$req]);
-    $respEnv = $this->req($env, $this->APIURL);
-    if (!$respEnv || empty($respEnv->getApiUrl())) {
-      throw new Exception("Unable to get endpoint URL");
-    }
-    $this->endpoint = "https://".$respEnv->getApiUrl()."/rpc";*/
   }
 }

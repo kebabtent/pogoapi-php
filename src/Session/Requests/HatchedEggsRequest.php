@@ -25,7 +25,7 @@ class HatchedEggsRequest extends Request {
     return $msg;
   }
 
-  public function getResponseHandler($raw) {
+  protected function getResponseHandler($raw) {
     return new GetHatchedEggsResponse($raw);
   }
 }

@@ -1,9 +1,10 @@
 <?php
 namespace POGOAPI\Session;
 
+use POGOAPI\Util\Serializable;
 use POGOProtos\Networking\Envelopes\AuthTicket as ProtoAuthTicket;
 
-class AuthTicket {
+class AuthTicket implements Serializable {
   protected $start;
   protected $expire;
   protected $end;
@@ -52,7 +53,7 @@ class AuthTicket {
   /**
    * @return string
    */
-  public function toHex() {
+  public function serialize() {
     return bin2hex($this->toBinary());
   }
 
@@ -68,7 +69,7 @@ class AuthTicket {
    * @param string $hex
    * @return AuthTicket
    */
-  public static function fromHex($hex) {
+  public static function unserialize($hex) {
     return self::fromBinary(hex2bin($hex));
   }
 }

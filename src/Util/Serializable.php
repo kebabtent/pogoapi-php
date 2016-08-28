@@ -3,14 +3,13 @@ namespace POGOAPI\Util;
 
 interface Serializable {
   /**
-   * @return array
+   * @return mixed
    */
-  public function toArray();
-
+  public function serialize();
 
   /**
    * @param $data
    * @return self
    */
-  public static function fromArray($data);
+  public static function unserialize($data);
 }
