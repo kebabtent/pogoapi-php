@@ -240,7 +240,6 @@ class Profile implements ContextSerializable {
       throw new Exception("Unable to obtain player data");
     }
     $data = $resp->getPlayerData();
-    var_dump($data);
 
     $this->setUpdated();
     $this->setCreationTimeStampMs($data->getCreationTimestampMs());
@@ -327,7 +326,7 @@ class Profile implements ContextSerializable {
       $profile->setContact(Contact::unserialize($profile, $data['contact']));
       $profile->setPokecoins($data['pokecoins']);
       $profile->setStardust($data['stardust']);
-      if (isset($data['avatar']) && !is_null($data['avatar'])) {
+      if (isset($data['avatar']) && !is_null($data['avatar']) && strlen($data['avatar']) > 1) {
         $profile->setAvatar(Avatar::unserialize($profile, $data['avatar']));
       }
     }

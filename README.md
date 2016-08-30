@@ -3,10 +3,11 @@ API for Pokemon Go
 
 ## Progress
 * [x] Login with google
-* [ ] Login with PTC
+* [x] Login with PTC
 * [x] Uk6 compatible
 * [x] Obtain endpoint
 * [x] Obtain profile
+* [x] Obtain map objects (pokemons/pokestops/gyms)
 
 ## Installation
 Add the following fields in your project `composer.json`:

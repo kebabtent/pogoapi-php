@@ -27,7 +27,7 @@ abstract class Fort {
     $this->location = new Location($data->getLatitude(), $data->getLongitude());
   }
 
-  protected function getDetails() {
+  public function getDetails() {
     if ($this->hasDetails) {
       return;
     }
@@ -37,7 +37,7 @@ abstract class Fort {
     $resp = $req->getResponse();
 
     $this->hasDetails = true;
-    $this->name = $resp->getName();
+    $this->name = utf8_decode($resp->getName());
     $this->imageURL = NULL;
     if ($resp->hasImageUrlsList()) {
       $urls = $resp->getImageUrlsList();
@@ -46,7 +46,7 @@ abstract class Fort {
         break;
       }
     }
-    $this->description = $resp->getDescription();
+    $this->description = utf8_decode($resp->getDescription());
   }
 
   /**
