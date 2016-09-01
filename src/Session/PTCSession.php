@@ -56,7 +56,6 @@ class PTCSession extends Session {
         "allow_redirects" => [
           "on_redirect" => function(Request $request, Response $response) use (&$ticket) {
             // Extract ticket from HTTP-Location header.
-            echo "HEADER LINE: '".$response->getHeaderLine("Location")."'\n";
             preg_match("/ticket=(.+)/", $response->getHeaderLine("Location"), $matches);
             if (isset($matches[1])) {
               $ticket = $matches[1];

@@ -3,6 +3,7 @@ namespace POGOAPI\Session;
 
 use Exception;
 use Monolog\Logger;
+use POGOAPI\Session\Requests\MapObjectsRequest;
 use POGOAPI\Util\MicroTime;
 use POGOAPI\Player\Profile;
 use POGOAPI\Map\Location;
@@ -166,6 +167,16 @@ abstract class Session {
    */
   public function setLocation(Location $location) {
     $this->location = $location;
+  }
+
+  /**
+   * @return MapObjectsRequest
+   * @throws Exception
+   */
+  public function getMapObjects() {
+    $req = new MapObjectsRequest($this);
+    $req->execute();
+    return $req;
   }
 
   abstract public function authenticate();
